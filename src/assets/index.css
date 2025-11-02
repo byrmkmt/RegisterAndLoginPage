@@ -1,0 +1,73 @@
+body{
+    margin: 0;
+    position:absolute;
+    top:0; bottom: 0; left:0; right: 0;
+    background-color: #00854c;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login_registrar{
+    width: 50%;
+    min-height: 60vh;
+    display: block;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.login_registrar_tab{
+    min-width: 50% !important;
+    color: #00854c !important;
+}
+
+.css-1qltlow-MuiTabs-indicator{
+    background-color: #00854c !important;
+}
+
+.css-1ew92b2-MuiFormLabel-root-MuiInputLabel-root.Mui-focused{
+    color: #00854c !important;
+}
+
+.css-5h82ro-MuiInputBase-root-MuiInput-root::after{
+    border-bottom: 2px solid #00854c !important;
+
+}
+
+.css-1xp5r68-MuiFormControl-root-MuiTextField-root{
+    width: 35% !important;
+    min-width: 300px !important;
+    padding-bottom: 2rem !important;
+}
+
+.css-1blvszr-MuiButtonBase-root-MuiButton-root{
+    border-color: #00854c !important;
+    color: #00854c !important;
+}
+
+.css-10o2lyd-MuiStack-root>.MuiTextField-root, .css-10o2lyd-MuiStack-root>.MuiPickersTextField-root{
+    min-width: 300px !important;
+    padding-bottom: 2rem !important;
+}
+
+
+.Mui-focused {
+    color: #00854c !important;
+    border-color: #00854c !important;
+}
+
+.MuiFormControl-root .MuiPickersTextField-root .Mui-focused .css-eqc3kq-MuiFormControl-root-MuiPickersTextField-root{
+    border-color: #00854c !important;
+}
+
+.css-4k4mmf-MuiButtonBase-root-MuiPickersDay-root.Mui-selected{
+    background-color: #00854c !important;
+}
+
+.MuiFormControl-root MuiPickersTextField-root Mui-focused css-eqc3kq-MuiFormControl-root-MuiPickersTextField-root{
+    border-color: #00854c !important;
+}
