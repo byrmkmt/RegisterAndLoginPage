@@ -7,8 +7,9 @@ import Login from './login';
 import ServerDown from './errors/ServerDown';
 import PersonelInfoRegister from './personalnfoRegister';
 import ContactInfoRegister from './contactInfoRegister';
-import {AccountProvider} from './FormContext';
-import { useError } from './errors/errorContext';
+import AccountInfoRegister from './accountInfoRegister';
+import {AccountProvider} from './contexts/FormContext';
+import { useError } from './contexts/errorContext';
 
 
 function CustomTabPanel(props) {
@@ -53,10 +54,15 @@ function RegisterService({tabValue}){
   return(
       <AccountProvider>
         <CustomTabPanel value={tabValue} index={1}>
-            {registrarWizard === 0 ? 
-              <PersonelInfoRegister wizardStep ={handleWizardChange}></PersonelInfoRegister> :
-              <ContactInfoRegister wizardStep ={handleWizardChange}></ContactInfoRegister>
-            }
+          {registrarWizard === 0 ? (
+            <PersonelInfoRegister wizardStep={handleWizardChange} />
+          ) : registrarWizard === 1 ? (
+            <ContactInfoRegister wizardStep={handleWizardChange} />
+          ) : registrarWizard === 2 ? (
+            <AccountInfoRegister wizardStep={handleWizardChange} />
+          ) : (
+            <div />  // boş element, hatayı önler
+          )}
         </CustomTabPanel>
       </AccountProvider>
   ); 

@@ -4,8 +4,8 @@ import axios from "axios";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-import {AccountFormContext} from './FormContext'
-import { useError } from "./errors/errorContext";
+import {AccountFormContext} from './contexts/FormContext'
+import { useError } from "./contexts/errorContext";
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -13,13 +13,13 @@ import Button from '@mui/material/Button';
 export default function ContactInfoRegister({wizardStep}){
     const {accountForm, setAccountForm} = useContext(AccountFormContext);
     const {setHasError, hasError ,clearErrors} = useError();
-    const navigate = useNavigate();
 
-    const buttonContainer = {display:'flex', 
-        flexDirection: 'row', 
-        width:'35%', 
+    const buttonContainer = {
+        display: 'flex',
+        flexDirection: 'row',
         justifyContent: 'space-between',
-        minWidth: '300px !important', width: '35%'
+        minWidth: '300px',
+        width: '35%'
     };
 
     const handleChange = (e) => {
@@ -36,6 +36,15 @@ export default function ContactInfoRegister({wizardStep}){
         }));
     }
 
+    const handleTransition = async() => {
+        const success = await handleSubmitForm();
+        if (success) {
+            wizardStep(2);
+        } else {
+            // showError
+        }
+    };    
+
     const handleSubmitForm = async () => {
         try{
             clearErrors();
@@ -50,7 +59,10 @@ export default function ContactInfoRegister({wizardStep}){
                 ...prev,
                 customerId: response.data["Customer Id"]
             }));
-            navigate("/success", {state : {id:accountForm.customerId, name:accountForm.personalInformation.firstName, surname:accountForm.personalInformation.lastName}});                              
+            localStorage.setItem("registerData", JSON.stringify({ 
+                name:accountForm.personalInformation.firstName, 
+                surname:accountForm.personalInformation.lastName }));        
+            return true;                    
         } catch(err){
             if(err.response && err.response.status === 400){
                 const data = err.response.data;
@@ -76,7 +88,8 @@ export default function ContactInfoRegister({wizardStep}){
                     type: "server",
                     messages:{general:"Server is disconnected."}
                 });
-            }    
+            }   
+            return false; 
         }
     }
 
@@ -103,8 +116,8 @@ export default function ContactInfoRegister({wizardStep}){
                     <Button variant="outlined" onClick={() => wizardStep(0)}>
                         <span>Geri</span>
                     </Button>
-                    <Button variant="outlined" onClick={handleSubmitForm}>
-                        <span>Kayıt Talebi</span>
+                    <Button variant="outlined" onClick={handleTransition}>
+                        <span>İleri</span>
                     </Button>
                 </div>
             </div>

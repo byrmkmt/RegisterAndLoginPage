@@ -5,8 +5,8 @@ import dayjs from 'dayjs';
 
 import { useContext } from "react";
 
-import {AccountFormContext} from './FormContext'
-import { useError } from "./errors/errorContext";
+import {AccountFormContext} from './contexts/FormContext'
+import { useError } from "./contexts/errorContext";
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
