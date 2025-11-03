@@ -30,9 +30,8 @@ export default function AccountInfoRegister({wizardStep}){
             customerId: accountForm.customerId,
             password: password
         };
-        const id = accountForm.customerId;
         try {
-            await axios.post(`http://localhost:8083/registration/registrar/complete/${id}`, requestBody);
+            await axios.post(`http://localhost:8083/registration/registrar/complete`, requestBody);
             console.log("Completed!");
             navigate("/success");
         } catch (err) {
