@@ -3,6 +3,7 @@ import "./assets/index.css";
 import {useState, useContext} from "react"
 
 import {AccountFormContext} from './contexts/FormContext'
+import { useError } from "./contexts/errorContext";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -12,10 +13,8 @@ import Button from '@mui/material/Button';
 
 export default function AccountInfoRegister({wizardStep}){
     const {accountForm} = useContext(AccountFormContext);
-    const [accountInfo, setAccountInfo] = useState({
-            username: "",
-            password: ""
-    });
+    const [password, setPassword] = useState("");
+     const {setHasError, hasError ,clearErrors} = useError();
     const navigate = useNavigate();
 
     const buttonContainer = {display:'flex', 
@@ -25,37 +24,53 @@ export default function AccountInfoRegister({wizardStep}){
         minWidth: '300px !important', width: '35%'
     };
 
-    const handleChange = (e) => {
-        const {name, value} = e.target;
-        setAccountInfo(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
     const handleSubmitForm = async () => {
+        clearErrors();
         const requestBody = {
-            customerId:accountForm.customerId,
-            username:accountInfo.username,
-            password:accountInfo.password
-        }
+            customerId: accountForm.customerId,
+            password: password
+        };
         const id = accountForm.customerId;
-        axios.post(`http://localhost:8083/registration/registrar/complete/` + id,requestBody)
-            .then(() => console.log("Completed!"))
-            .catch(() => console.error("Not Completed!"));
-        navigate("/success");                              
-    }
+        try {
+            await axios.post(`http://localhost:8083/registration/registrar/complete/${id}`, requestBody);
+            console.log("Completed!");
+            navigate("/success");
+        } catch (err) {
+            if (err.response && err.response.status === 400) {
+                const data = err.response.data;
+                if (data && typeof data === "object" && !data.message) {
+                    setHasError({
+                        type: "validation",
+                        messages: data
+                    });
+                } else if (data.message) {
+                    setHasError({
+                        type: "validation",
+                        messages: { general: data.message }
+                    });
+                } else {
+                    setHasError({
+                        type: "validation",
+                        messages: { general: "Bilinmeyen doğrulama hatası" }
+                    });
+                }
+            } else {
+                setHasError({
+                    type: "server",
+                    messages: { general: "Server is disconnected." }
+                });
+            }
+        }
+    };
 
     return (
         <>
             <div className='container' style= {{ height: "50vh" }}>
                 <span style={{color:'#00854c', fontWeight:'700', fontSize: '1.25rem', paddingBottom: '1rem'}}>İletişim Bilgiler</span>
-                <TextField name="username" value={accountInfo.username}                  
-                    label="Kullanıcı Adı"  variant="standard" 
-                    onChange={handleChange}/>
-                <TextField name="password" value={accountInfo.password}
+                <TextField name="password" value={password}
                     label="Şifre" variant="standard" type="password"
-                    onChange={handleChange} />
+                    error={!!hasError?.messages?.password} helperText={hasError?.messages?.password}  
+                    onChange={(e) => setPassword(e.target.value)} />
                 <div style={buttonContainer}>
                     <Button variant="outlined" onClick={() => wizardStep(1)}>
                         <span>Geri</span>
