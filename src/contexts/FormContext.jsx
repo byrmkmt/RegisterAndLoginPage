@@ -15,9 +15,7 @@ export function AccountProvider({ children }) {
                 email:'',
                 openAddress:''
             }
-        },
-        username: null,
-        password: null
+        }
     });
 
     useEffect(() => {

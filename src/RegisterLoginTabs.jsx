@@ -49,7 +49,7 @@ function RegisterService({tabValue}){
     setRegistrarWizard(newStep);
   }
 
-  if(hasError.type == "server")
+  if(hasError.type === "server")
     return <ServerDown />
   return(
       <AccountProvider>
@@ -61,7 +61,7 @@ function RegisterService({tabValue}){
           ) : registrarWizard === 2 ? (
             <AccountInfoRegister wizardStep={handleWizardChange} />
           ) : (
-            <div />  // boş element, hatayı önler
+            <div />
           )}
         </CustomTabPanel>
       </AccountProvider>
@@ -90,7 +90,9 @@ export default function BasicTabs() {
       <CustomTabPanel value={value} index={0}>
         <Login></Login>
       </CustomTabPanel>
-       <RegisterService tabValue={value}/>
+      <CustomTabPanel value={value} index={1}>
+        <RegisterService tabValue={value}/>
+      </CustomTabPanel>        
     </Box>
   );
 }
