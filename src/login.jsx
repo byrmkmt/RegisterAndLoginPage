@@ -5,10 +5,12 @@ import { useState } from "react";
 import { useError } from "./contexts/errorContext";
 import { Snackbar, Alert } from '@mui/material';
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Login(){
     const [loginForm, setLoginForm] = useState({username:null, password: null});
     const {setHasError, hasError, clearErrors}= useError();
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -47,7 +49,9 @@ export default function Login(){
     const submitLoginForm = async () => {
         try {
             clearErrors();
-            await axios.post("http://localhost:8083/home/login", loginForm);
+            const res = await axios.post("http://localhost:8083/home/login", loginForm);
+            localStorage.setItem("username", loginForm.username);   
+            navigate('/profile');
         } catch (err) {
             if (err.response) {
                 const { status, data } = err.response;
