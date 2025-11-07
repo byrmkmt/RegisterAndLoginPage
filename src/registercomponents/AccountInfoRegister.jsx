@@ -1,12 +1,11 @@
-import "./assets/index.css";
+import "../assets/index.css";
 
 import {useState, useContext} from "react"
-
-import {AccountFormContext} from './contexts/FormContext'
-import { useError } from "./contexts/errorContext";
-
-import axios from "axios";
+import {AccountFormContext} from '../contexts/FormContext'
 import { useNavigate } from "react-router-dom";
+import { useError } from "../contexts/ErrorContext";
+
+import apiPostRequest from "../api/Api"
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -14,8 +13,8 @@ import Button from '@mui/material/Button';
 export default function AccountInfoRegister({wizardStep}){
     const {accountForm} = useContext(AccountFormContext);
     const [password, setPassword] = useState("");
-     const {setHasError, hasError ,clearErrors} = useError();
     const navigate = useNavigate();
+    const {setHasError, hasError, clearErrors} = useError();
 
     const buttonContainer = {display:'flex', 
         flexDirection: 'row', 
@@ -25,41 +24,17 @@ export default function AccountInfoRegister({wizardStep}){
     };
 
     const handleSubmitForm = async () => {
-        clearErrors();
         const requestBody = {
             customerId: accountForm.customerId,
             password: password
         };
-        try {
-            await axios.post(`http://localhost:8083/registration/registrar/complete`, requestBody);
+        const { success, result } = await apiPostRequest(requestBody, 
+                                        "http://localhost:8083/registration/registrar/complete",
+                                        {setHasError, hasError, clearErrors});
+        if (success) {
             console.log("Completed!");
             navigate("/success");
-        } catch (err) {
-            if (err.response && err.response.status === 400) {
-                const data = err.response.data;
-                if (data && typeof data === "object" && !data.message) {
-                    setHasError({
-                        type: "validation",
-                        messages: data
-                    });
-                } else if (data.message) {
-                    setHasError({
-                        type: "validation",
-                        messages: { general: data.message }
-                    });
-                } else {
-                    setHasError({
-                        type: "validation",
-                        messages: { general: "Bilinmeyen doğrulama hatası" }
-                    });
-                }
-            } else {
-                setHasError({
-                    type: "server",
-                    messages: { general: "Server is disconnected." }
-                });
-            }
-        }
+        } 
     };
 
     return (

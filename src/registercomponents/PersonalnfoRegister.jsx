@@ -1,12 +1,12 @@
-import "./assets/index.css";
+import "../assets/index.css";
 
-import axios from "axios";
 import dayjs from 'dayjs';
 
 import { useContext } from "react";
+import apiPostRequest from "../api/Api"
 
-import {AccountFormContext} from './contexts/FormContext'
-import { useError } from "./contexts/errorContext";
+import {AccountFormContext} from '../contexts/FormContext'
+import { useError } from "../contexts/ErrorContext";
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -19,16 +19,7 @@ import Button from '@mui/material/Button';
 
 export default function PersonelInfoRegister({wizardStep}){
     const {accountForm, setAccountForm} = useContext(AccountFormContext);
-    const {setHasError, hasError ,clearErrors} = useError();
-
-    const handleClick = async() => {
-        const success = await handleSubmitForm();
-        if (success) {
-            wizardStep(1);
-        } else {
-            // showError
-        }
-    };
+    const {setHasError, hasError, clearErrors} = useError();
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -52,51 +43,25 @@ export default function PersonelInfoRegister({wizardStep}){
     }    
 
     const handleSubmitForm = async () => {
-        try{
-            clearErrors();
-            const accountInfo ={
-                customerId : accountForm.customerId,
-                personalInformation: {
-                    firstName : accountForm.personalInformation.firstName,
-                    lastName: accountForm.personalInformation.lastName,
-                    tcNumber: accountForm.personalInformation.tcNumber,
-                    dateOfBirth: accountForm.personalInformation.dateOfBirth,                  
-                }
+        const accountInfo ={
+            customerId : accountForm.customerId,
+            personalInformation: {
+                firstName : accountForm.personalInformation.firstName,
+                lastName: accountForm.personalInformation.lastName,
+                tcNumber: accountForm.personalInformation.tcNumber,
+                dateOfBirth: accountForm.personalInformation.dateOfBirth,                  
             }
-            const res = await axios.post("http://localhost:8083/registration/registrar/personalInfo", accountInfo);
+        }
+        const { success, result } = await apiPostRequest(accountInfo, 
+                                        "http://localhost:8083/registration/registrar/personalInfo",
+                                        {setHasError, hasError, clearErrors});
+        if (success) {
             setAccountForm(prev => ({
                 ...prev,
-                customerId: res.data["Customer Id"]
+                customerId: result.data["Customer Id"]
             }));
-            return true;
-        } catch(err){
-            if(err.response && err.response.status === 400){
-                const data = err.response.data;
-                if(data && typeof data === "object"){
-                    setHasError({
-                        type: "validation",
-                        messages: data
-                    })
-                } else if(data.message){
-                    setHasError({
-                        type: "validation",
-                        messages: {general: data.message}
-                    })
-                } else{
-                    setHasError({
-                        type: "validation",
-                        messages: {general: "Bilinmeyen doğrulama hatası"}
-                    })
-                }
-            }
-            else{
-                setHasError({
-                    type: "server",
-                    messages:{general:"Server is disconnected."}
-                });
-            }
-            return false;
-        }
+            wizardStep(1);
+        }                             
     }
 
     return (
@@ -132,7 +97,7 @@ export default function PersonelInfoRegister({wizardStep}){
                     />
                 </DemoContainer>
                 </LocalizationProvider>                    
-                <Button variant="outlined" onClick={handleClick}>
+                <Button variant="outlined" onClick={handleSubmitForm}>
                     <span>Sonraki</span>
                 </Button>
             </div>

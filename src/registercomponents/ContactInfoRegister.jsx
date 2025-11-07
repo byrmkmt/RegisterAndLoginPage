@@ -1,18 +1,17 @@
-import "./assets/index.css";
+import "../assets/index.css";
 
-import axios from "axios";
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import {AccountFormContext} from '../contexts/FormContext'
+import { useError } from "../contexts/ErrorContext";
 
-import {AccountFormContext} from './contexts/FormContext'
-import { useError } from "./contexts/errorContext";
+import apiPostRequest from "../api/Api"
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 export default function ContactInfoRegister({wizardStep}){
     const {accountForm, setAccountForm} = useContext(AccountFormContext);
-    const {setHasError, hasError ,clearErrors} = useError();
+    const {setHasError, hasError, clearErrors} = useError();
 
     const buttonContainer = {
         display: 'flex',
@@ -36,61 +35,26 @@ export default function ContactInfoRegister({wizardStep}){
         }));
     }
 
-    const handleTransition = async() => {
-        const success = await handleSubmitForm();
-        if (success) {
-            wizardStep(2);
-        } else {
-            // showError
-        }
-    };    
-
     const handleSubmitForm = async () => {
-        try{
-            clearErrors();
-            const contactInfo ={
-                phoneNumber: accountForm.personalInformation.contactInformation.phoneNumber,
-                email: accountForm.personalInformation.contactInformation.email,
-                openAddress: accountForm.personalInformation.contactInformation.openAddress
-            }            
-            const id = accountForm.customerId;
-            const response = await axios.post("http://localhost:8083/registration/registrar/contactInfo/" + id, contactInfo);
+        const contactInfo ={
+            phoneNumber: accountForm.personalInformation.contactInformation.phoneNumber,
+            email: accountForm.personalInformation.contactInformation.email,
+            openAddress: accountForm.personalInformation.contactInformation.openAddress
+        }            
+        const id = accountForm.customerId;
+        const { success, result } = await apiPostRequest(contactInfo, 
+                                        "http://localhost:8083/registration/registrar/contactInfo/" + id,
+                                        {setHasError, hasError, clearErrors});
+        if (success) {
             setAccountForm(prev => ({
                 ...prev,
-                customerId: response.data["Customer Id"]
+                customerId: result.data["Customer Id"]
             }));
             localStorage.setItem("registerData", JSON.stringify({ 
                 name:accountForm.personalInformation.firstName, 
-                surname:accountForm.personalInformation.lastName }));        
-            return true;                    
-        } catch(err){
-            if(err.response && err.response.status === 400){
-                const data = err.response.data;
-                if(data && typeof data === "object"){
-                    setHasError({
-                        type: "validation",
-                        messages: data
-                    })
-                } else if(data.message){
-                    setHasError({
-                        type: "validation",
-                        messages: {general: data.message}
-                    })
-                } else{
-                    setHasError({
-                        type: "validation",
-                        messages: {general: "Bilinmeyen doğrulama hatası"}
-                    })
-                }
-            }
-            else{
-                setHasError({
-                    type: "server",
-                    messages:{general:"Server is disconnected."}
-                });
-            }   
-            return false; 
-        }
+                surname:accountForm.personalInformation.lastName })); 
+            wizardStep(2);
+        }                        
     }
 
     return (
@@ -116,7 +80,7 @@ export default function ContactInfoRegister({wizardStep}){
                     <Button variant="outlined" onClick={() => wizardStep(0)}>
                         <span>Geri</span>
                     </Button>
-                    <Button variant="outlined" onClick={handleTransition}>
+                    <Button variant="outlined" onClick={handleSubmitForm}>
                         <span>İleri</span>
                     </Button>
                 </div>

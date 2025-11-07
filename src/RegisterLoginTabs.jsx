@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import Login from './login';
-import ServerDown from './errors/ServerDown';
-import PersonelInfoRegister from './personalnfoRegister';
-import ContactInfoRegister from './contactInfoRegister';
-import AccountInfoRegister from './accountInfoRegister';
+import Login from './Login';
+import ServerDown from './errorcomponents/ServerDown';
+import PersonelInfoRegister from './registercomponents/PersonalnfoRegister';
+import ContactInfoRegister from './registercomponents/ContactInfoRegister';
+import AccountInfoRegister from './registercomponents/AccountInfoRegister';
 import {AccountProvider} from './contexts/FormContext';
-import { useError } from './contexts/errorContext';
+import { useError } from './contexts/ErrorContext';
 
 
 function CustomTabPanel(props) {

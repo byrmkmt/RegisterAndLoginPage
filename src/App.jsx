@@ -1,9 +1,8 @@
 import "./assets/index.css";
 import BasicTabs from './RegisterLoginTabs'
-import { ErrorProvider } from './contexts/errorContext';
+import { ErrorProvider } from './contexts/ErrorContext';
 
-
-export default function Home(props) {
+export default function App(props) {
 
   return (
     <>

@@ -1,31 +1,38 @@
 
-import ProfileHeader from './ProfileHeader'
+import ProfileInfoPanel from './profilecomponents/ProfileInfoPanel'
+import ProfileBalancePanel from './profilecomponents/ProfileBalancePanel'
+import LatestTransfersPanel from './profilecomponents/LatestTransfersPanel'
+import AccountTransactionsPanel from './profilecomponents/AccountTransactionsPanel'
+
+import apiPostRequest from "./api/Api"
+import { useError } from "./contexts/ErrorContext";
+
 import {useProfileInfo} from './contexts/ProfileContext'
-import axios from "axios";
 import { useEffect } from 'react';
 
 export default function Profile (){
     const {profileInfo, setProfileInfo} = useProfileInfo();
-    const username = localStorage.getItem("username") || "";
+    const {hasError, setHasError, clearErrors} = useError(); 
+    const username = localStorage.getItem("username") || ""; 
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                console.log(username);
-                const res = await axios.post("http://localhost:8084/account/profile", username,
-                    {headers: {"Content-Type": "text/plain"}});
+            console.log(username);
+            const {success, result} = await apiPostRequest(username, 
+                                            "http://localhost:8084/account/profile",
+                                            {setHasError, hasError, clearErrors},
+                                            {"Content-Type": "text/plain"});
+            if (success) {
                 setProfileInfo({
-                    userId: res.data.userId,
-                    accountNumber: res.data.accountNumber,
-                    firstName: res.data.firstName,
-                    lastName: res.data.lastName,
-                    balance: res.data.balance,
-                    status: res.data.status,
-                    latestTransfers: res.data.latestTransfers
+                    userId: result.data.userId,
+                    accountNumber: result.data.accountNumber,
+                    firstName: result.data.firstName,
+                    lastName: result.data.lastName,
+                    balance: result.data.balance,
+                    status: result.data.status,
+                    latestTransfers: result.data.latestTransfers
                 });
-            } catch (error) {
-                console.error("Error fetching profile info:", error);
-            }
+            } 
         };
         fetchData();
     }, []);
@@ -33,10 +40,15 @@ export default function Profile (){
     return (
         <>
             <header>
-                <ProfileHeader profile={profileInfo}></ProfileHeader>
+                <ProfileInfoPanel profile={profileInfo}></ProfileInfoPanel>
             </header>
-            <main></main>
-            <footer></footer> 
+            <main>
+                <ProfileBalancePanel balance={profileInfo.balance}></ProfileBalancePanel>
+                <LatestTransfersPanel latestTransfers={profileInfo.latestTransfers}></LatestTransfersPanel>
+            </main>
+            <footer>
+                <AccountTransactionsPanel profile={profileInfo}></AccountTransactionsPanel>
+            </footer> 
         </>
     );
 }

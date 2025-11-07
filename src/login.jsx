@@ -2,15 +2,17 @@ import "./assets/index.css";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useState } from "react";
-import { useError } from "./contexts/errorContext";
 import { Snackbar, Alert } from '@mui/material';
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
+import apiPostRequest from "./api/Api"
+
+import { useError } from "./contexts/ErrorContext";
 
 export default function Login(){
     const [loginForm, setLoginForm] = useState({username:null, password: null});
-    const {setHasError, hasError, clearErrors}= useError();
     const navigate = useNavigate();
+    const {setHasError, hasError, clearErrors} = useError();  
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -23,11 +25,9 @@ export default function Login(){
     function ShowError(){
         const getErrorMessage = () => {
             if (!hasError.messages) return '';
-            
             if (hasError.messages.general) {
                 return hasError.messages.general;
             }
-            
             const firstMessage = Object.values(hasError.messages)[0];
             return firstMessage || 'Bir hata oluştu';
         };     
@@ -47,75 +47,14 @@ export default function Login(){
     }
 
     const submitLoginForm = async () => {
-        try {
-            clearErrors();
-            const res = await axios.post("http://localhost:8083/home/login", loginForm);
+        const { success, result } = await apiPostRequest(loginForm, 
+                                        "http://localhost:8083/home/login",
+                                        {setHasError, hasError, clearErrors});
+        if (success) {
             localStorage.setItem("username", loginForm.username);   
             navigate('/profile');
-        } catch (err) {
-            if (err.response) {
-                const { status, data } = err.response;
-                if (status === 400) {
-                    if (data && typeof data === "object") {
-                        if (data.message && typeof data.message === "string") {
-                            setHasError({
-                                type: "validation",
-                                messages: { general: data.message }
-                            });
-                        } 
-                        else if (Object.keys(data).length > 0) {
-                            setHasError({
-                                type: "validation",
-                                messages: data
-                            });
-                        } else {
-                            setHasError({
-                                type: "validation",
-                                messages: { general: "Bilinmeyen doğrulama hatası" }
-                            });
-                        }
-                    } else {
-                        setHasError({
-                            type: "validation",
-                            messages: { general: "Geçersiz istek" }
-                        });
-                    }
-                } 
-                else if (status === 401) {
-                    setHasError({
-                        type: "authentication",
-                        messages: { general: data?.message || "Kullanıcı adı veya şifre hatalı" }
-                    });
-                }
-                else if (status >= 500) {
-                    // Sunucu hatası
-                    setHasError({
-                        type: "server",
-                        messages: { general: "Sunucu hatası. Lütfen daha sonra tekrar deneyin." }
-                    });
-                }
-                else {
-                    setHasError({
-                        type: "unknown",
-                        messages: { general: data?.message || "Bir hata oluştu" }
-                    });
-                }
-            } 
-            else if (err.request) {
-                setHasError({
-                    type: "server",
-                    messages: { general: "Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin." }
-                });
-            } 
-            else {
-                setHasError({
-                    type: "unknown",
-                    messages: { general: "Beklenmeyen bir hata oluştu" }
-                });
-            }
-        }
+        }              
     };
-
 
     return (
         <>

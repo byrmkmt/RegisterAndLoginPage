@@ -21,8 +21,6 @@ export function ErrorProvider({children}){
     );
 }
 
-/* Bu sayede uygulamanın herhangi bir yerinde: const { hasError, setHasError, clearErrors} = useError(); 
-ile global error durumunu okuyup değiştirebiliriz. */
 export function useError(){
     return useContext(ErrorContext);
 }
