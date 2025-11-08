@@ -9,6 +9,7 @@ import { useError } from "./contexts/ErrorContext";
 
 import {useProfileInfo} from './contexts/ProfileContext'
 import { useEffect } from 'react';
+import "./assets/profile.css"
 
 export default function Profile (){
     const {profileInfo, setProfileInfo} = useProfileInfo();
