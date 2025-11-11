@@ -43,12 +43,12 @@ export default function Profile (){
             <header>
                 <ProfileInfoPanel profile={profileInfo}></ProfileInfoPanel>
             </header>
-            <main>
+            <main style={{backgroundColor:"#ffffff"}}>
+                <AccountTransactionsPanel profile={profileInfo}></AccountTransactionsPanel>
                 <ProfileBalancePanel balance={profileInfo.balance}></ProfileBalancePanel>
                 <LatestTransfersPanel latestTransfers={profileInfo.latestTransfers}></LatestTransfersPanel>
             </main>
-            <footer>
-                <AccountTransactionsPanel profile={profileInfo}></AccountTransactionsPanel>
+            <footer style={{backgroundColor:"#ffffff"}}>
             </footer> 
         </>
     );
