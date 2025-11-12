@@ -5,18 +5,36 @@ const apiPostRequest = async (requestBody, urlPath, errorHandlers, headers) => {
     try{
         clearErrors();
         const finalHeaders = headers || { "Content-Type": "application/json" };
-        const response = await axios.post(urlPath, requestBody,{
-            headers: finalHeaders,
-        });
-        return { success: true, result: response };         
+        if(requestBody !== null) {
+            const response = await axios.post(urlPath, requestBody,{
+                headers: finalHeaders,
+            });
+            return { success: true, result: response };  
+        } else{
+            const response = await axios.get(urlPath,{
+                headers: finalHeaders,
+            });
+            return { success: true, result: response };  
+        }      
     } catch(err){
         if(err.response && err.response.status === 400){
             const data = err.response.data;
             if(data && typeof data === "object"){
-                setHasError({
-                    type: "validation",
-                    messages: data
-                })
+                const entries = Object.entries(data);
+                if (entries.length === 1) {
+                    const [key, value] = entries[0];
+                    const messages = Object.fromEntries(entries);
+                    setHasError({
+                        type: key,
+                        messages: messages
+                    });
+                } else {
+                    const messages = Object.fromEntries(entries);
+                    setHasError({
+                        type: "validation",
+                        messages
+                    });
+                }
             } else if(data.message){
                 setHasError({
                     type: "validation",

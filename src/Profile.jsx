@@ -4,6 +4,8 @@ import ProfileBalancePanel from './profilecomponents/ProfileBalancePanel'
 import LatestTransfersPanel from './profilecomponents/LatestTransfersPanel'
 import AccountTransactionsPanel from './profilecomponents/AccountTransactionsPanel'
 
+import { Paper } from '@mui/material';
+
 import apiPostRequest from "./api/Api"
 import { useError } from "./contexts/ErrorContext";
 
@@ -45,8 +47,10 @@ export default function Profile (){
             </header>
             <main style={{backgroundColor:"#ffffff"}}>
                 <AccountTransactionsPanel profile={profileInfo}></AccountTransactionsPanel>
-                <ProfileBalancePanel balance={profileInfo.balance}></ProfileBalancePanel>
-                <LatestTransfersPanel latestTransfers={profileInfo.latestTransfers}></LatestTransfersPanel>
+                <Paper sx={{display:'flex', flexDirection: 'row', gap:'1rem', justifyContent: 'center', padding:'2rem 0rem'}}>
+                    <ProfileBalancePanel balance={profileInfo.balance}></ProfileBalancePanel> 
+                    <LatestTransfersPanel latestTransfers={profileInfo.latestTransfers}></LatestTransfersPanel>
+                </Paper>
             </main>
             <footer style={{backgroundColor:"#ffffff"}}>
             </footer> 

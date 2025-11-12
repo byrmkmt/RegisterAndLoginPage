@@ -25,10 +25,9 @@ export default function ProfileBalancePanel({balance}){
     return (
         <React.Fragment>
             <div style={{display:"flex", justifyContent:"center"}}>
-                <Box sx={{ 
-                    height: '60vh', width: "80%" ,marginTop: "1rem"}}>
+                <Box sx={{ width: "80%" ,marginTop: "1rem"}}>
                     <ThemeProvider theme={theme}>
-                        <Card sx={{ width: "30%", margin: "5rem 5rem 0", background:"#F4FAFF",
+                        <Card sx={{ background:"#F4FAFF",
                             color:"#rgb(0, 58, 114)"
                         }}>
                         <CardContent>

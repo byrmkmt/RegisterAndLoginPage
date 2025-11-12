@@ -3,8 +3,8 @@ import apiPostRequest from "../api/Api"
 
 import Button from '@mui/material/Button';
 import PaymentIcon from '@mui/icons-material/Payment';
-import { useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle,TextField,Typography, Grid, CardHeader, CardContent, Card, CardActionArea
+import { useState, useEffect } from 'react';
+import { Dialog, DialogActions, DialogContent, DialogTitle,TextField,Typography, Grid, CardHeader, CardContent, Card, CardActionArea, Alert
 } from '@mui/material';
 
 function TransferDialog(props){
@@ -26,15 +26,10 @@ function TransferDialog(props){
         }));
     }
 
-    function splitFullName(fullName = "") {
-        const parts = fullName.trim().split(/\s+/);
-        if (parts.length === 0) {
-            return { firstName: "", lastName: "" };
-        }
-        const lastName = parts.length > 1 ? parts.pop() : "";
-        const firstName = parts.join(" ");
-        return { firstName, lastName };
-    }    
+    const handleClose = () => {
+        clearErrors();
+        onClose();
+    };    
 
     const submitMoneyTransfer = async () => {
         const { firstName, lastName } = splitFullName(targetAccount.fullName);
@@ -49,12 +44,12 @@ function TransferDialog(props){
                                         "http://localhost:8084/account/transfer/" + username,
                                         {setHasError, hasError, clearErrors});
         if (success) {
-            console.log("Success: " +  result.data);
-        }
+            console.log("Success: " +  result);
+        } 
     }
 
     return (
-        <Dialog onClose={onClose}
+        <Dialog onClose={handleClose}
                 open={onOpen}
                 PaperProps={{
                     sx: {
@@ -64,6 +59,15 @@ function TransferDialog(props){
                 }} >                  
             <DialogTitle variant='h4' fontWeight={700} margin={2}>Para Transferi</DialogTitle>
             <DialogContent>
+
+                {hasError && hasError.messages && Object.keys(hasError.messages).length > 0 &&  (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        {typeof hasError.messages === "string"
+                        ? hasError.messages
+                        : Object.values(hasError.messages).join(", ")}
+                    </Alert>
+                )}
+
                 <Card sx={{background:"#F4FAFF"}}>
                     <CardHeader title="Hesap Bilgileri" sx={{margin:"0rem 1rem", textAlign:'center'}}/>
                     <CardContent>
@@ -116,7 +120,7 @@ function TransferDialog(props){
                 <Button variant="outlined" onClick={onClose} color="#F4FAFF">
                     <span>Vazgeç</span>
                 </Button>
-                <Button variant="outlined" color="#F4FAFF" onSubmit={submitMoneyTransfer}>
+                <Button variant="outlined" color="#F4FAFF" onClick={submitMoneyTransfer}>
                     <span>Gönder</span>
                 </Button>                        
             </div>
@@ -137,7 +141,11 @@ export default function AccountTransactionsPanel({profile}){
 
     return (
         <>
-            <Button variant="outlined" 
+            <Button variant="outlined"
+                sx={{
+                    color:"rgb(0, 58, 114)",
+                    borderColor:'rgb(0, 58, 114)'
+                }}
                 startIcon={<PaymentIcon/>}
                 onClick={openDialog}>
                     Para Transfer
@@ -150,3 +158,19 @@ export default function AccountTransactionsPanel({profile}){
         </>
     );
 }
+
+
+
+/* Helper method */
+function splitFullName(fullName = "") {
+    const parts = fullName.trim().split(/\s+/);
+
+    if (parts.length === 0) {
+        return { firstName: "", lastName: "" };
+    }
+    
+    const lastName = parts.length > 1 ? parts.pop() : "";
+    const firstName = parts.join(" ");
+    
+    return { firstName, lastName };
+}    
