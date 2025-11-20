@@ -58,7 +58,7 @@ export default function PersonelInfoRegister({wizardStep}){
         if (success) {
             setAccountForm(prev => ({
                 ...prev,
-                customerId: result.data["Customer Id"]
+                customerId: result.data["customerId"]
             }));
             wizardStep(1);
         }                             
@@ -71,17 +71,17 @@ export default function PersonelInfoRegister({wizardStep}){
                 <TextField name = "firstName" id="registrer-user-name" 
                     label="İsim" variant="standard" 
                     value={accountForm.personalInformation.firstName}
-                    error={!!hasError?.messages?.firstName} helperText={hasError?.messages?.firstName}
+                    error={!!hasError?.validationErrors?.firstName} helperText={hasError?.validationErrors?.firstName}
                     onChange={handleChange}/>
                 <TextField name = "lastName" id="register-user-password" 
                     label="Soyisim" variant="standard" 
                     value={accountForm.personalInformation.lastName}
-                    error={!!hasError?.messages?.lastName} helperText={hasError?.messages?.lastName}                    
+                    error={!!hasError?.validationErrors?.lastName} helperText={hasError?.validationErrors?.lastName}                    
                     onChange={handleChange}/>
                 <TextField name = "tcNumber" id="register-user-tckn" 
                     label="T.C. Kimlik No" variant="standard" 
                     value={accountForm.personalInformation.tcNumber}
-                    error={!!hasError?.messages?.tcNumber} helperText={hasError?.messages?.tcNumber}                          
+                    error={!!hasError?.validationErrors?.tcNumber} helperText={hasError?.validationErrors?.tcNumber}                          
                     onChange={handleChange}/>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={['DatePicker']}>
@@ -90,8 +90,8 @@ export default function PersonelInfoRegister({wizardStep}){
                         renderInput={(params) => 
                         <TextField 
                             {...params} 
-                            error={!!hasError.messages.dateOfBirth} 
-                            helperText={hasError.messages.dateOfBirth} 
+                            error={!!hasError.validationErrors.dateOfBirth} 
+                            helperText={hasError.validationErrors.dateOfBirth} 
                             />}                       
                         onChange={handleDatePicker}
                     />

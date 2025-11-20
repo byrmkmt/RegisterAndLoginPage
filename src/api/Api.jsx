@@ -17,50 +17,27 @@ const apiPostRequest = async (requestBody, urlPath, errorHandlers, headers) => {
             return { success: true, result: response };  
         }      
     } catch(err){
-        if(err.response && err.response.status === 400){
-            const data = err.response.data;
-            if(data && typeof data === "object"){
-                const entries = Object.entries(data);
-                if (entries.length === 1) {
-                    const [key, value] = entries[0];
-                    const messages = Object.fromEntries(entries);
-                    setHasError({
-                        type: key,
-                        messages: messages
-                    });
-                } else {
-                    const messages = Object.fromEntries(entries);
-                    setHasError({
-                        type: "validation",
-                        messages
-                    });
-                }
-            } else if(data.message){
-                setHasError({
-                    type: "validation",
-                    messages: {general: data.message}
-                })
-            } else{
-                setHasError({
-                    type: "validation",
-                    messages: {general: "Bilinmeyen doğrulama hatası"}
-                })
-            }
+        let errorResponse;
+        if (err.response) {
+            const apiError = err.response.data;
+            errorResponse = {
+                code: apiError.code ?? null,
+                message: apiError.message ?? "Bir hata oluştu",
+                timestamp: apiError.timestamp ?? null,
+                path: apiError.path ?? urlPath,
+                validationErrors: apiError.validationErrors ?? {}
+            };
+        } else {
+            errorResponse = {
+                code: "NETWORK_ERROR",
+                message: "Sunucuya erişilemedi.",
+                timestamp: new Date().toISOString(),
+                path: urlPath,
+                validationErrors: {}
+            };
         }
-        else if(err.response && err.response.status === 401){
-            const data = err.response.data;
-            setHasError({
-                type: "unauthorized",
-                messages: typeof data === "object" ? data : { message: data }
-            });
-        }        
-        else{
-            setHasError({
-                type: "server",
-                messages:{general:"Server is disconnected."}
-            });
-        }   
-        return { success: false, result: hasError};
+        setHasError(errorResponse);
+        return { success: false, result: errorResponse };
     }
 }
 

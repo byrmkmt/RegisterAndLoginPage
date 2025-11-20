@@ -3,15 +3,17 @@ import { createContext, useContext, useState, useMemo } from "react";
 const ErrorContext = createContext();
 
 export function ErrorProvider({children}){
-    const[hasError, setHasError] = useState({
-        type: null,         // validation, server etc.
-        messages: {}
-    });
+    const initialErrorState = {
+        code: null,
+        message: null,
+        timestamp: null,
+        path: null,
+        validationErrors: {}
+    };
 
-    const clearErrors = () => setHasError({
-        type: null,
-        messages: {}
-    })
+    const[hasError, setHasError] = useState(initialErrorState);
+
+    const clearErrors = () => setHasError(initialErrorState)
 
     const value = useMemo (() => ({ hasError, setHasError , clearErrors}), [hasError]);
     return (

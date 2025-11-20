@@ -19,7 +19,6 @@ export function AccountProvider({ children }) {
     });
 
     useEffect(() => {
-        console.log(accountForm);
         localStorage.setItem("accountForm", JSON.stringify(accountForm));
     }, [accountForm]);
 

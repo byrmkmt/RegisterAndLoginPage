@@ -48,7 +48,7 @@ export default function ContactInfoRegister({wizardStep}){
         if (success) {
             setAccountForm(prev => ({
                 ...prev,
-                customerId: result.data["Customer Id"]
+                customerId: result.data["customerId"]
             }));
             localStorage.setItem("registerData", JSON.stringify({ 
                 name:accountForm.personalInformation.firstName, 
@@ -63,17 +63,17 @@ export default function ContactInfoRegister({wizardStep}){
                 <span style={{color:'#00854c', fontWeight:'700', fontSize: '1.25rem', paddingBottom: '1rem'}}>İletişim Bilgiler</span>
                 <TextField name="phoneNumber" id="registrer-user-phone-number" 
                     value={accountForm.personalInformation.contactInformation.phoneNumber}
-                    error={!!hasError?.messages?.phoneNumber} helperText={hasError?.messages?.phoneNumber}                   
+                    error={!!hasError?.validationErrors?.phoneNumber} helperText={hasError?.validationErrors?.phoneNumber}                   
                     label="Cep Numarası"  variant="standard" 
                     onChange={handleChange}/>
                 <TextField name="email" id="register-user-email" 
                     value={accountForm.personalInformation.contactInformation.email}
-                    error={!!hasError?.messages?.email} helperText={hasError?.messages?.email}    
+                    error={!!hasError?.validationErrors?.email} helperText={hasError?.validationErrors?.email}    
                     label="E-Posta" variant="standard" 
                     onChange={handleChange}/>
                 <TextField name="openAddress" id="register-user-open-address" 
                     value={accountForm.personalInformation.contactInformation.openAddress}
-                    error={!!hasError?.messages?.openAddress} helperText={hasError?.messages?.openAddress}    
+                    error={!!hasError?.validationErrors?.openAddress} helperText={hasError?.validationErrors?.openAddress}    
                     label="Açık Adres" variant="standard" 
                     onChange={handleChange}/>
                 <div style={buttonContainer}>

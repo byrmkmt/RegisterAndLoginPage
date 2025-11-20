@@ -43,7 +43,7 @@ export default function AccountInfoRegister({wizardStep}){
                 <span style={{color:'#00854c', fontWeight:'700', fontSize: '1.25rem', paddingBottom: '1rem'}}>İletişim Bilgiler</span>
                 <TextField name="password" value={password}
                     label="Şifre" variant="standard" type="password"
-                    error={!!hasError?.messages?.password} helperText={hasError?.messages?.password}  
+                    error={!!hasError?.validationErrors?.password} helperText={hasError?.validationErrors?.password}  
                     onChange={(e) => setPassword(e.target.value)} />
                 <div style={buttonContainer}>
                     <Button variant="outlined" onClick={() => wizardStep(1)}>

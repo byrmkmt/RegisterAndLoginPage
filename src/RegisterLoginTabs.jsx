@@ -70,13 +70,10 @@ function RegisterService({tabValue}){
 
 export default function BasicTabs() {
   const [value, setValue] = React.useState(0);
-  const {setHasError} = useError();
+  const {clearErrors} = useError();
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    setHasError({
-      type: null,
-      messages: []
-    });
+    clearErrors();
   };
   
   return (

@@ -38,7 +38,7 @@ export default function Profile (){
             } 
         };
         fetchData();
-    }, []);
+    }, [username]);  
 
     return (
         <>
@@ -46,11 +46,14 @@ export default function Profile (){
                 <ProfileInfoPanel profile={profileInfo}></ProfileInfoPanel>
             </header>
             <main style={{backgroundColor:"#ffffff"}}>
-                <AccountTransactionsPanel profile={profileInfo}></AccountTransactionsPanel>
-                <Paper sx={{display:'flex', flexDirection: 'row', gap:'1rem', justifyContent: 'center', padding:'2rem 0rem'}}>
+                    <Paper sx={{margin:"auto",width: "50%", padding: "1rem 0rem", boxShadow: 'none'}}>
+                        <AccountTransactionsPanel profile={profileInfo}></AccountTransactionsPanel>
+                    </Paper>
+                    <Paper sx={{display:'flex', flexDirection: 'row', gap:'1rem', justifyContent: 'center', 
+                        padding:'2rem 0rem', boxShadow: 'none'}}>
                     <ProfileBalancePanel balance={profileInfo.balance}></ProfileBalancePanel> 
                     <LatestTransfersPanel latestTransfers={profileInfo.latestTransfers}></LatestTransfersPanel>
-                </Paper>
+                    </Paper>
             </main>
             <footer style={{backgroundColor:"#ffffff"}}>
             </footer> 
