@@ -20,29 +20,33 @@ export default function Login(){
             ...prev,
             [name]: value
         }));
+        if (hasError) clearErrors();
     };
 
-    function ShowError(){
-        const getErrorMessage = () => {
-            if (!hasError.messages) return '';
-            if (hasError.messages.general) {
-                return hasError.messages.general;
-            }
-            const firstMessage = Object.values(hasError.messages)[0];
-            return firstMessage || 'Bir hata oluştu';
-        };     
+    function ShowError() {
+        if (!hasError || hasError.code === null) return null;
 
-        return (<>
+        const getErrorMessage = () => {
+            if (hasError.message) return hasError.message;
+            const errors = hasError.validationErrors;
+            if (errors && Object.keys(errors).length > 0) {
+                const firstKey = Object.keys(errors)[0];
+                return errors[firstKey] || 'Bir hata oluştu';
+            }
+            return 'Bir hata oluştu';
+        };
+
+        return (
             <Snackbar
-                open={hasError.type !== null}
+                open={true}
                 autoHideDuration={6000}
-                onClose={() => clearErrors()}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-                <Alert severity="error" onClose={() => clearErrors()}>
+                onClose={clearErrors}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert severity="error" onClose={clearErrors}>
                     {getErrorMessage()}
                 </Alert>
             </Snackbar>
-            </>
         );
     }
 
@@ -62,11 +66,11 @@ export default function Login(){
                 <span></span>
                 <TextField name="username" id="login-user-name" 
                     label="Kullanıcı Adı" variant="standard" 
-                    error={!!hasError?.messages?.username} helperText={hasError?.messages?.username}
+                    error={!!hasError?.validationErrors?.username} helperText={hasError?.validationErrors?.username}
                     onChange={handleChange}/>
                 <TextField name="password" id="login-user-password" 
                     label="Şifre" variant="standard" 
-                    error={!!hasError?.messages?.password} helperText={hasError?.messages?.password}
+                    error={!!hasError?.validationErrors?.password} helperText={hasError?.validationErrors?.password}
                     onChange={handleChange}/>
                 <Button variant="outlined"
                     onClick={submitLoginForm}>Oturum Aç</Button>
